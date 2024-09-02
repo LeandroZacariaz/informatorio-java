@@ -61,43 +61,39 @@ public class ParticipanteServiceImpl implements ParticipanteService{
     public void inscribirParticipante(UUID idParticipante, UUID idEvento) {
         Participante participanteSeleccionado = null;
         EventoGastronomico eventoGastronomicoSeleccionado = null;
-        boolean existeParticipante = Boolean.FALSE;
-        boolean existeEvento = Boolean.FALSE;
 
         for (EventoGastronomico eventoGastronomico: eventoGastronomicoService.getEventos()){
             if(eventoGastronomico.getId_evento().equals(idEvento)){
                 eventoGastronomicoSeleccionado = eventoGastronomico;
-                existeEvento=Boolean.TRUE;
                 break;
             }
-        }
-        if (!existeEvento) {
-            throw new NoSuchElementException ("No existe el evento.");
         }
 
         for (Participante participante: this.getParticipantes()){
             if (participante.getId_participante().equals(idParticipante)){
                 participanteSeleccionado = participante;
-                existeParticipante = Boolean.TRUE;
                 break;
             }
         }
-        if (!existeParticipante) {
-            throw new NoSuchElementException ("No existe el participante.");
-        }
 
         if (eventoGastronomicoSeleccionado.getParticipantes().size() >= eventoGastronomicoSeleccionado.getCapacidad()) {
-            throw new IllegalStateException("El evento con ID: " + idEvento + " ya esta lleno.");
+            System.out.println("El evento con ID: " + idEvento + " ya esta lleno.");
+        } else{
+            boolean encontroParticipante=false;
+            for(Participante participante: eventoGastronomicoSeleccionado.getParticipantes()){
+                if (participante.getId_participante().equals(participanteSeleccionado.getId_participante())) {
+                    encontroParticipante=true;
+                    System.out.println("El participante ya se encuentra en el evento.");
+                    break;
+                }
+            }
+            if (!encontroParticipante){
+                eventoGastronomicoSeleccionado.getParticipantes().add(participanteSeleccionado);
+                participanteSeleccionado.getHistorial_eventos().add(eventoGastronomicoSeleccionado);
+                System.out.println("Participante añadido correctamente.");
+            }
         }
 
-        if (existeParticipante&&existeEvento){
-            eventoGastronomicoSeleccionado.getParticipantes().add(participanteSeleccionado);
-            participanteSeleccionado.getHistorial_eventos().add(eventoGastronomicoSeleccionado);
-            System.out.println("Participante añadido correctamente.");
-        } else{
-            System.out.println("No se pudo inscribir el participante.");
-        }
-        
 
         
     }
