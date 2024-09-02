@@ -125,42 +125,138 @@ public class MenuServiceImpl implements MenuService{
                     participanteService.registrarParticipante();
                     break;
                 case 2:
-                    //agarro el id del participante
-                    System.out.println("Seleccionar Participante (Ingrese el ID): ");
+                    //verifico que hayan participantes y eventos creados
+                    if(participanteService.getParticipantes().isEmpty() || eventoGastronomicoService.getEventos().isEmpty()){
+                        System.out.println("No hay participantes o eventos creados.");
+                        break;
+                    } 
+
+                    //muestro todos los participantes
+                    System.out.println("Lista de todos los participantes: ");
                     for (Participante participante : participanteService.getParticipantes()) {
                         System.out.println("\nID: " + participante.getId_participante() + " -- Nombre y Apellido: " + participante.getNombre() + "," + participante.getApellido());
                     }
-                    String idParticipanteInput = scanner.nextLine();
-                    scanner.nextLine();
-                    UUID idParticipante = UUID.fromString(idParticipanteInput);
-                    //agarro id del evento
-                    System.out.println("Seleccionar Evento (Ingrese el ID): ");
+                    //verifico que el id corresponda a un participante
+                    boolean idPartValido=false;
+                    UUID idParticipante = null;
+                    while (!idPartValido) {
+                        System.out.println("Ingrese el ID del participante: ");
+                        String idParticipanteInput = scanner.nextLine();
+                        scanner.nextLine();
+                        try {
+                            idParticipante = UUID.fromString(idParticipanteInput); //convierto a UUID
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("El ID ingresado no es válido.");
+                        }
+
+                        for(Participante participante: participanteService.getParticipantes()){
+                            if (participante.getId_participante().equals(idParticipante)) { //compara usando equals
+                                idPartValido=true;
+                                break; 
+                            }
+                        }
+                        if (!idPartValido) {
+                            System.out.println("No se encontró un participante con el ID ingresado. Por favor, intente de nuevo.");
+                        }
+                        
+                    }
+                
+
+                    //muestro todos los eventos
+                    System.out.println("Lista de todos los eventos: ");
                     for (EventoGastronomico eventos: eventoGastronomicoService.getEventos()){
                         System.out.println("\nID: " + eventos.getId_evento() + " -- Nombre: " +eventos.getNombre() + " -- Fecha: " + eventos.getFecha_hora());
                     }
-                    String idEventoInput = scanner.nextLine();
-                    scanner.nextLine();
-                    UUID idEvento = UUID.fromString(idEventoInput);
+                    //verifico que el id corresponda a un evento
+                    boolean idEventValido=false;
+                    UUID idEvento=null;
+                    while (!idEventValido) {
+                        System.out.println("Ingrese el ID del evento: ");
+                        String idEventoInput = scanner.nextLine();
+                        scanner.nextLine();
+                        try {
+                            idEvento = UUID.fromString(idEventoInput);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("El ID ingresado no es válido.");
+                        }
+                        for(EventoGastronomico evento: eventoGastronomicoService.getEventos()){
+                            if(evento.getId_evento().equals(idEvento)){
+                                idEventValido=true;
+                                break;
+                            }
+                        }
+                        if (!idEventValido) {
+                            System.out.println("No se encontró un evento con el ID ingresado. Por favor, intente de nuevo.");
+                        }
+                    }
                     
                     participanteService.inscribirParticipante(idParticipante, idEvento);
                     break;
                 case 3:
-                    //agarro el id del participante
-                    System.out.println("Seleccionar Participante (Ingrese el ID): ");
+
+                    //verifico que hayan participantes y eventos creados
+                    if(participanteService.getParticipantes().isEmpty() || eventoGastronomicoService.getEventos().isEmpty()){
+                        System.out.println("No hay participantes o eventos creados.");
+                        break;
+                    } 
+                    //muestro todos los participantes
+                    System.out.println("Lista de todos los participantes: ");
                     for (Participante participante : participanteService.getParticipantes()) {
                         System.out.println("\nID: " + participante.getId_participante() + " -- Nombre y Apellido: " + participante.getNombre() + "," + participante.getApellido());
                     }
-                    String idParticipanteInputResenia = scanner.nextLine();
-                    UUID idParticipanteResenia = UUID.fromString(idParticipanteInputResenia);
-                    scanner.nextLine();
-                    //agarro id del evento
-                    System.out.println("Seleccionar Evento (Ingrese el ID): ");
+                    //verifico que el id corresponda a un participante
+                    boolean idPartResValido=false;
+                    UUID idParticipanteResenia = null;
+                    while (!idPartResValido) {
+                        System.out.println("Ingrese el ID del participante: ");
+                        String idParticipanteReseniaInput = scanner.nextLine();
+                        scanner.nextLine();
+                        try {
+                            idParticipanteResenia = UUID.fromString(idParticipanteReseniaInput); //convierto a UUID
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("El ID ingresado no es válido.");
+                        }
+
+                        for(Participante participante: participanteService.getParticipantes()){
+                            if (participante.getId_participante().equals(idParticipanteResenia)) { //compara usando equals
+                                idPartResValido=true;
+                                break; 
+                            }
+                        }
+                        if (!idPartResValido) {
+                            System.out.println("No se encontró un participante con el ID ingresado. Por favor, intente de nuevo.");
+                        }
+                        
+                    }
+                
+                    //muestro todos los eventos
+                    System.out.println("Lista de todos los eventos: ");
                     for (EventoGastronomico eventos: eventoGastronomicoService.getEventos()){
                         System.out.println("\nID: " + eventos.getId_evento() + " -- Nombre: " +eventos.getNombre() + " -- Fecha: " + eventos.getFecha_hora());
                     }
-                    String idEventoInputResenia = scanner.nextLine();
-                    scanner.nextLine();
-                    UUID idEventoResenia = UUID.fromString(idEventoInputResenia);
+                    //verifico que el id corresponda a un evento
+                    boolean idEventoReseniaValido=false;
+                    UUID idEventoResenia=null;
+                    while (!idEventoReseniaValido) {
+                        System.out.println("Ingrese el ID del evento: ");
+                        String idEventoReseniaInput = scanner.nextLine();
+                        scanner.nextLine();
+                        try {
+                            idEventoResenia = UUID.fromString(idEventoReseniaInput);
+                        } catch (IllegalArgumentException e) {
+                            System.out.println("El ID ingresado no es válido.");
+                        }
+                        for(EventoGastronomico evento: eventoGastronomicoService.getEventos()){
+                            if(evento.getId_evento().equals(idEventoResenia)){
+                                idEventoReseniaValido=true;
+                                break;
+                            }
+                        }
+                        if (!idEventoReseniaValido) {
+                            System.out.println("No se encontró un evento con el ID ingresado. Por favor, intente de nuevo.");
+                        }
+                    }
+                    
                     reseniaService.crearResenia(idParticipanteResenia, idEventoResenia);
                     break;
                 case 4:

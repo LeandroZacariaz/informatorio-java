@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
-
+import java.time.format.DateTimeParseException;
 import ar.com.eventococina.domain.Chef;
 import ar.com.eventococina.domain.EventoGastronomico;
 import ar.com.eventococina.domain.Participante;
@@ -52,9 +52,19 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
         sc.nextLine();
         nuevoEvento.setNombre(descripcion);
 
-        System.out.println("Ingrese la hora del evento (Formato YYYY-MM-DD'T'HH:MM:SS -- Ejemplo: 2024-12-24T15:30:00)");
-        LocalDateTime fecha_hora = LocalDateTime.parse(sc.nextLine());
-        sc.nextLine();
+        //solicito la fecha hasta que sea valida
+        LocalDateTime fecha_hora=null;
+        boolean fechaValida = false;
+        while (!fechaValida) {
+            try {
+                System.out.println("Ingrese la fecha y hora (Formato YYYY-MM-DD'T'HH:MM:SS): ");
+                fecha_hora = LocalDateTime.parse(sc.nextLine());
+                sc.nextLine();
+                fechaValida = true;  // Si no lanza excepción, la fecha es válida
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato de fecha incorrecto. Por favor, intente de nuevo.");
+            }
+        } 
         nuevoEvento.setFecha_hora(fecha_hora);
 
         System.out.println("Ingrese la ubicacion del evento: ");
@@ -67,28 +77,38 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
         sc.nextLine();
         nuevoEvento.setCapacidad(capacidad);
         
-        System.out.println("Seleccione al chef a cargo del evento (Ingrese su ID): ");
+        //listo todos los chefs
+        System.out.println("Lista de Chefs disponibles: ");
         for (Chef chef : chefs) {
             System.out.println("\nID: " + chef.getId_chef() + " -- Nombre: " + chef.getNombre() + " -- Especialidad: " + chef.getEspecialidad());
         }
 
-        String idChefInput = sc.nextLine();
-        UUID idChef;
-        try {
-            idChef = UUID.fromString(idChefInput); //convertir a UUID
-        } catch (IllegalArgumentException e) {
-            System.out.println("El ID ingresado no es válido.");
-            return null;
-        }
-
+        //verifico que el id que se ingrese, corresponde a un chef
+        boolean idvalido=false;
         Chef chefSeleccionado = null;
-        for (Chef chef : chefs) {
-            if (chef.getId_chef().equals(idChef)) { //compara usando equals 
-                chefSeleccionado = chef;
-                break; 
+        while (!idvalido) {
+            System.out.println("Ingrese el ID del chef: ");
+            String idChefInput = sc.nextLine();
+            sc.nextLine();
+            UUID idChef=null;
+            try {
+                idChef = UUID.fromString(idChefInput); //convertir a UUID
+            } catch (IllegalArgumentException e) {
+                System.out.println("El ID ingresado no es válido.");
+            }
+            
+            for (Chef chef : chefs) {
+                if (chef.getId_chef().equals(idChef)) { //compara usando equals 
+                    chefSeleccionado = chef;
+                    idvalido=true;
+                    break; 
+                }
+            }
+            if (!idvalido) {
+                System.out.println("No se encontró un chef con el ID ingresado. Por favor, intente de nuevo.");
             }
         }
-        
+            
         nuevoEvento.setChef(chefSeleccionado);
 
         eventos.add(nuevoEvento);
@@ -101,9 +121,19 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
 
         Scanner sc = new Scanner(System.in);
 
-        System.out.println("Ingrese la fecha y hora (Formato YYYY-MM-DD'T'HH:MM:SS): ");
-        LocalDateTime fecha_hora = LocalDateTime.parse(sc.nextLine());
-        sc.nextLine();
+        //solicito la fecha hasta que sea valida
+        LocalDateTime fecha_hora=null;
+        boolean fechaValida = false;
+        while (!fechaValida) {
+            try {
+                System.out.println("Ingrese la fecha y hora (Formato YYYY-MM-DD'T'HH:MM:SS): ");
+                fecha_hora = LocalDateTime.parse(sc.nextLine());
+                sc.nextLine();
+                fechaValida = true;  // Si no lanza excepción, la fecha es válida
+            } catch (DateTimeParseException e) {
+                System.out.println("Formato de fecha incorrecto. Por favor, intente de nuevo.");
+            }
+        }  
 
         System.out.println("Eventos a partir de " + fecha_hora + ": ");
         for (EventoGastronomico evento : eventos) {
@@ -121,7 +151,7 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
                 }
                 System.out.println("RESEÑAS: ");
                 for (Resenia resenia: evento.getResenias()){
-                    System.out.println("\nParticipante: " + resenia.getParticipante().getNombre() + resenia.getParticipante().getApellido() +
+                    System.out.println("\nParticipante: " + resenia.getParticipante().getNombre() +", "+ resenia.getParticipante().getApellido() +
                                         " -- Calificacion: " + resenia.getCalificacion() + 
                                         " -- Comentario " + resenia.getComentario());
                 }
