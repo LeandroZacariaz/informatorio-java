@@ -103,6 +103,15 @@ public class ParticipanteServiceImpl implements ParticipanteService{
         return participantes;
     }
 
+    @Override
+    public Participante getParticipanteById(UUID id_participante){
+        for (Participante participante : participantes) { 
+            if (participante.getId_participante().equals(id_participante)) {
+                return participante;
+            }
+        }
+        throw new NoSuchElementException("Participante con ID: " + id_participante + " no encontrado.");
+    }
     
     
 }

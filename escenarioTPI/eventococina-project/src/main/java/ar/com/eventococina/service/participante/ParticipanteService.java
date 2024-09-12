@@ -12,4 +12,5 @@ public interface ParticipanteService {
 
     List<Participante> getParticipantes();
 
+    Participante getParticipanteById(UUID id_participante);
 }

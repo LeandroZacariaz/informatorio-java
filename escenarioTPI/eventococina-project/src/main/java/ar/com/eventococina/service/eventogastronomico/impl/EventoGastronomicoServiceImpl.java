@@ -3,6 +3,7 @@ package ar.com.eventococina.service.eventogastronomico.impl;
 import java.util.ArrayList;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.util.UUID;
 import java.time.format.DateTimeParseException;
@@ -17,6 +18,7 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
 
     private List<EventoGastronomico> eventos = new ArrayList<>();
     private ChefService chefService;
+
     public EventoGastronomicoServiceImpl(ChefService chefService) {
         this.chefService = chefService;
     }
@@ -25,7 +27,6 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
     public EventoGastronomicoServiceImpl() {
         this.eventos = new ArrayList<>();
     }
-
 
     @Override
     public EventoGastronomico crearEvento(List<Chef> chefs) {
@@ -52,19 +53,7 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
         sc.nextLine();
         nuevoEvento.setNombre(descripcion);
 
-        //solicito la fecha hasta que sea valida
-        LocalDateTime fecha_hora=null;
-        boolean fechaValida = false;
-        while (!fechaValida) {
-            try {
-                System.out.println("Ingrese la fecha y hora (Formato YYYY-MM-DD'T'HH:MM:SS): ");
-                fecha_hora = LocalDateTime.parse(sc.nextLine());
-                sc.nextLine();
-                fechaValida = true;  // Si no lanza excepción, la fecha es válida
-            } catch (DateTimeParseException e) {
-                System.out.println("Formato de fecha incorrecto. Por favor, intente de nuevo.");
-            }
-        } 
+        LocalDateTime fecha_hora=solicitarFechaHora();
         nuevoEvento.setFecha_hora(fecha_hora);
 
         System.out.println("Ingrese la ubicacion del evento: ");
@@ -72,11 +61,61 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
         sc.nextLine();
         nuevoEvento.setUbicacion(ubicacion);
 
-        System.out.println("Ingrese la capacidad de participantes");
+        System.out.println("Ingrese la capacidad de participantes:");
         int capacidad = sc.nextInt();
         sc.nextLine();
         nuevoEvento.setCapacidad(capacidad);
         
+        Chef chefSeleccionado=seleccionarChef(chefs);
+            
+        nuevoEvento.setChef(chefSeleccionado);
+
+        eventos.add(nuevoEvento);
+        System.out.println("Evento creado correctamente.");
+        return nuevoEvento;
+    }
+
+    @Override
+    public void listarEventosFecha() {
+
+        Scanner sc = new Scanner(System.in);
+
+        LocalDateTime fecha_hora=solicitarFechaHora();
+        
+        System.out.println("Eventos a partir de " + fecha_hora + ": ");
+        for (EventoGastronomico evento : eventos) {
+            if (evento.getFecha_hora().isAfter(fecha_hora)) {
+                System.out.println("--------------------------------------------------------------------------------");
+                System.out.println(evento.getNombre() + 
+                                    " -- Ubicación: "+evento.getUbicacion() + 
+                                    " -- Fecha y Hora: " + evento.getFecha_hora() + 
+                                    " \nCHEF A CARGO: " + evento.getChef().getNombre() + " -- Especialidad: " + evento.getChef().getEspecialidad() +
+                                    "\nPARTICIPANTES: ");
+                for (Participante participante: evento.getParticipantes()){
+                    System.out.println("\nID: " + participante.getId_participante() + 
+                                        " -- Nombre: " + participante.getNombre() + 
+                                        " -- Apellido: " + participante.getApellido());
+                }
+                System.out.println("RESEÑAS: ");
+                for (Resenia resenia: evento.getResenias()){
+                    System.out.println("\n"+resenia.getParticipante().getNombre() +", "+ resenia.getParticipante().getApellido() +
+                                        " -- Calificacion: " + resenia.getCalificacion() + 
+                                        " -- Comentario " + resenia.getComentario());
+                }
+                System.out.println("--------------------------------------------------------------------------------");
+            }
+        }
+
+    }
+
+    @Override
+    public List<EventoGastronomico> getEventos() {
+        return eventos;
+    }
+    
+    private Chef seleccionarChef(List<Chef> chefs){
+        Scanner sc = new Scanner(System.in);
+
         //listo todos los chefs
         System.out.println("Lista de Chefs disponibles: ");
         for (Chef chef : chefs) {
@@ -108,19 +147,12 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
                 System.out.println("No se encontró un chef con el ID ingresado. Por favor, intente de nuevo.");
             }
         }
-            
-        nuevoEvento.setChef(chefSeleccionado);
-
-        eventos.add(nuevoEvento);
-        System.out.println("Evento creado correctamente.");
-        return nuevoEvento;
+        
+        return chefSeleccionado;
     }
 
-    @Override
-    public void listarEventosFecha() {
-
+    private LocalDateTime solicitarFechaHora(){
         Scanner sc = new Scanner(System.in);
-
         //solicito la fecha hasta que sea valida
         LocalDateTime fecha_hora=null;
         boolean fechaValida = false;
@@ -133,38 +165,18 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
             } catch (DateTimeParseException e) {
                 System.out.println("Formato de fecha incorrecto. Por favor, intente de nuevo.");
             }
-        }  
-
-        System.out.println("Eventos a partir de " + fecha_hora + ": ");
-        for (EventoGastronomico evento : eventos) {
-            if (evento.getFecha_hora().isAfter(fecha_hora)) {
-                System.out.println("--------------------------------------------------------------------------------");
-                System.out.println(evento.getNombre() + 
-                                    " -- Ubicación: "+evento.getUbicacion() + 
-                                    " -- Fecha y Hora: " + evento.getFecha_hora() + 
-                                    " \nCHEF A CARGO: " + evento.getChef().getNombre() + " -- Especialidad: " + evento.getChef().getEspecialidad() +
-                                    "\nPARTICIPANTES: ");
-                for (Participante participante: evento.getParticipantes()){
-                    System.out.println("\nID: " + participante.getId_participante() + 
-                                        " -- Nombre: " + participante.getNombre() + 
-                                        " -- Apellido: " + participante.getApellido());
-                }
-                System.out.println("RESEÑAS: ");
-                for (Resenia resenia: evento.getResenias()){
-                    System.out.println("\nParticipante: " + resenia.getParticipante().getNombre() +", "+ resenia.getParticipante().getApellido() +
-                                        " -- Calificacion: " + resenia.getCalificacion() + 
-                                        " -- Comentario " + resenia.getComentario());
-                }
-                System.out.println("--------------------------------------------------------------------------------");
-            }
-        }
-
+        } 
+        return fecha_hora;
     }
 
     @Override
-    public List<EventoGastronomico> getEventos() {
-        return eventos;
+    public EventoGastronomico getEventoById(UUID id_evento){
+        for (EventoGastronomico evento : eventos) { 
+            if (evento.getId_evento().equals(id_evento)) {
+                return evento;
+            }
+        }
+        throw new NoSuchElementException("Evento con ID: " + id_evento + " no encontrado.");
     }
-    
     
 }

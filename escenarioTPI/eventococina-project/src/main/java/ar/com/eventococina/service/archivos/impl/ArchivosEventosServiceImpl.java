@@ -8,7 +8,7 @@ import ar.com.eventococina.domain.EventoGastronomico;
 import ar.com.eventococina.service.archivos.ArchivosEventosService;
 
 public class ArchivosEventosServiceImpl implements ArchivosEventosService{
-    private final String UBICACION_ARCHIVO = "\\src\\main\\java\\ar\\com\\eventococina\\recursos\\";
+    private final String UBICACION_ARCHIVO = "\\eventococina-project\\src\\main\\java\\ar\\com\\eventococina\\recursos\\";
 
     CSVWriter csvWriter;
 

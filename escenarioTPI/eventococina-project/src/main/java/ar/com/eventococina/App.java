@@ -24,7 +24,7 @@ public class App {
         EventoGastronomicoService eventoGastronomicoService = new EventoGastronomicoServiceImpl(chefService);
         
         ParticipanteService participanteService = new ParticipanteServiceImpl(eventoGastronomicoService);
-        ReseniaService reseniaService = new ReseniaServiceImpl(eventoGastronomicoService);
+        ReseniaService reseniaService = new ReseniaServiceImpl(eventoGastronomicoService, participanteService);
         ArchivosEventosService archivosEventosService = new ArchivosEventosServiceImpl();
         MenuService menuService = new MenuServiceImpl(eventoGastronomicoService, chefService,participanteService, reseniaService, archivosEventosService);
 
