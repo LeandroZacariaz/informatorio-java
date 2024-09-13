@@ -12,4 +12,6 @@ public interface EventoGastronomicoService {
     void listarEventosFecha();
     List<EventoGastronomico> getEventos();
     EventoGastronomico getEventoById(UUID id_evento);
+    void agregarChefAEvento(EventoGastronomico evento, List<Chef> chefs);
+
 }

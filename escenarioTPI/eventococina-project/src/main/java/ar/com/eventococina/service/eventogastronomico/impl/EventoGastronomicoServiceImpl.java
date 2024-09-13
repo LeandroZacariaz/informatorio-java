@@ -66,9 +66,7 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
         sc.nextLine();
         nuevoEvento.setCapacidad(capacidad);
         
-        Chef chefSeleccionado=seleccionarChef(chefs);
-            
-        nuevoEvento.setChef(chefSeleccionado);
+        agregarChefAEvento(nuevoEvento, chefs);
 
         eventos.add(nuevoEvento);
         System.out.println("Evento creado correctamente.");
@@ -111,6 +109,12 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
     @Override
     public List<EventoGastronomico> getEventos() {
         return eventos;
+    }
+
+    @Override
+    public void agregarChefAEvento(EventoGastronomico evento, List<Chef> chefs){
+        Chef chefSeleccionado=seleccionarChef(chefs);
+        evento.setChef(chefSeleccionado);
     }
     
     private Chef seleccionarChef(List<Chef> chefs){
