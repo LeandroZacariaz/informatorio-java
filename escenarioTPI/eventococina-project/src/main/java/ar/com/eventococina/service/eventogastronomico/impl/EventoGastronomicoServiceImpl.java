@@ -113,47 +113,10 @@ public class EventoGastronomicoServiceImpl implements EventoGastronomicoService{
 
     @Override
     public void agregarChefAEvento(EventoGastronomico evento, List<Chef> chefs){
-        Chef chefSeleccionado=seleccionarChef(chefs);
+        Chef chefSeleccionado=chefService.seleccionarChef(chefs);
         evento.setChef(chefSeleccionado);
     }
     
-    private Chef seleccionarChef(List<Chef> chefs){
-        Scanner sc = new Scanner(System.in);
-
-        //listo todos los chefs
-        System.out.println("Lista de Chefs disponibles: ");
-        for (Chef chef : chefs) {
-            System.out.println("\nID: " + chef.getId_chef() + " -- Nombre: " + chef.getNombre() + " -- Especialidad: " + chef.getEspecialidad());
-        }
-
-        //verifico que el id que se ingrese, corresponde a un chef
-        boolean idvalido=false;
-        Chef chefSeleccionado = null;
-        while (!idvalido) {
-            System.out.println("Ingrese el ID del chef: ");
-            String idChefInput = sc.nextLine();
-            sc.nextLine();
-            UUID idChef=null;
-            try {
-                idChef = UUID.fromString(idChefInput); //convertir a UUID
-            } catch (IllegalArgumentException e) {
-                System.out.println("El ID ingresado no es válido.");
-            }
-            
-            for (Chef chef : chefs) {
-                if (chef.getId_chef().equals(idChef)) { //compara usando equals 
-                    chefSeleccionado = chef;
-                    idvalido=true;
-                    break; 
-                }
-            }
-            if (!idvalido) {
-                System.out.println("No se encontró un chef con el ID ingresado. Por favor, intente de nuevo.");
-            }
-        }
-        
-        return chefSeleccionado;
-    }
 
     private LocalDateTime solicitarFechaHora(){
         Scanner sc = new Scanner(System.in);
